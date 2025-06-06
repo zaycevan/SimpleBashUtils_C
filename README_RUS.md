@@ -79,7 +79,7 @@ grep впервые был включен в Версию 4 Unix. Заявив, 
 
 ### Использование grep 
 
-`grep [options] template [file_name]`
+`grep [OPTION]... PATTERNS [FILE]...`
 
 ### Опции grep 
 

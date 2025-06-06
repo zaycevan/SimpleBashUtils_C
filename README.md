@@ -82,7 +82,7 @@ grep was first included in version 4 of Unix. Noting that it is "generally cited
 
 ### Usage of grep 
 
-`grep [options] template [file_name]`
+`grep [OPTION]... PATTERNS [FILE]...`
 
 ### grep options
 

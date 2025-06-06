@@ -80,7 +80,7 @@ grep birinchi marta Unixning 4-Versiyasiga kiritilgan. U "odatda prototip dastur
 
 ### grep dan foydalanish
 
-`grep [options] template [file_name]`
+`grep [OPTION]... PATTERNS [FILE]...`
 
 ### grep opsiyalari
 
