@@ -1,0 +1,21 @@
+Line 1 with normal text
+
+
+Multiple empty lines above
+
+      Line with leading spaces
+Line with trailing spaces     
+
+Line with carriage return
+	Line with	tab	character
+Line with special chars: !@#$%^&*()
+Line with unicode: café naïve 𝄞
+
+Line with CRLF ending
+Line with LF ending
+
+Last empty lines below
+
+
+
+EOF
