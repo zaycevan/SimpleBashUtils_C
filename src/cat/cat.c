@@ -69,7 +69,7 @@ static void symbol_handler(int* current_symbol) {
   }
 }
 
-static void file_handler(char* argv[], const OPTS_STATUS* opts_status) {
+static void file_handler(const char* argv[], const OPTS_STATUS* opts_status) {
   FILE* file = fopen(argv[optind], "r");
   if (file == NULL) {
     perror("Error opening file");
@@ -77,28 +77,23 @@ static void file_handler(char* argv[], const OPTS_STATUS* opts_status) {
   }
 
   int current_symbol;
+  int prev_symbol = '\n';
   int line_counter = 0;
   int empty_line_counter = 0;
-  int counter = 0;
 
   while ((current_symbol = fgetc(file)) != EOF) {
-    if ((opts_status->b && current_symbol != '\n') ||
-        (opts_status->n && current_symbol != '\n')) {
-      if (counter == 0) {
-        printf("%6d\t", ++line_counter);
-        counter = 1;
-      }
-      empty_line_counter = 0;
-    } else if (opts_status->s && current_symbol == '\n' && counter == 0) {
+    if (opts_status->s && current_symbol == '\n' && prev_symbol == '\n') {
       empty_line_counter++;
-      if (empty_line_counter <= 1) printf("%6d\t", ++line_counter);
-    } else if (opts_status->n && current_symbol == '\n' && counter == 0)
+    } else
+      empty_line_counter = 0;
+    if ((opts_status->b || opts_status->n) && current_symbol != '\n' &&
+        prev_symbol == '\n') {
       printf("%6d\t", ++line_counter);
-    else
-      counter = 0;
+    } else if (empty_line_counter <= 1 && opts_status->n &&
+               current_symbol == '\n' && prev_symbol == '\n')
+      printf("%6d\t", ++line_counter);
 
-    if ((opts_status->E) && current_symbol == '\n' && counter == 0 &&
-        empty_line_counter <= 1)
+    if ((opts_status->E) && current_symbol == '\n' && empty_line_counter <= 1)
       printf("$");
 
     if (opts_status->T && current_symbol == '\t') {
@@ -108,6 +103,7 @@ static void file_handler(char* argv[], const OPTS_STATUS* opts_status) {
 
     if (opts_status->v) symbol_handler(&current_symbol);
     if (empty_line_counter <= 1) putchar(current_symbol);
+    prev_symbol = current_symbol;
   }
   fclose(file);
 }
@@ -116,7 +112,7 @@ int main(int argc, char* argv[]) {
   OPTS_STATUS opts_status = {0};
   opts_handler(argc, argv, &opts_status);
   if (opts_status.b) opts_status.n = 0;
-  file_handler(argv, &opts_status);
+  file_handler((const char**)argv, &opts_status);
 
   return 0;
 }
