@@ -1,35 +1,60 @@
+SHELL := /bin/bash
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -std=c11
+FILE = *.txt
+REG_FILE = regex.txt
 
-DIR_cat = ./cat/
-DIR_grep = ./grep/
-
-SRC_cat = $(DIR_cat)*.c
-SRC_grep = $(DIR_grep)*.c
-
-OBJ_cat =  $(SRC_cat:.c=.o)
-OBJ_grep = $(SRC_grep:.c=.o)
-#OBJ_cat = $(patsubst %.c, %.o, $(notdir $(SRC)))
+SRC_grep = grep.c
+OBJ_grep =  $(SRC_grep:.c=.o)
 #OBJ_grep = $(patsubst %.c, %.o, $(notdir $(SRC)))
 
-TARGET_cat = s21_cat
 TARGET_grep = s21_grep
 
-all: s21_cat s21_grep
+all: s21_grep 
 
-s21_cat: $(OBJ_cat)
-	$(CC) $(CFLAGS) $(OBJ_cat) -o $(DIR_cat)$(TARGET_cat)
 s21_grep: $(OBJ_grep)
-	$(CC) $(CFLAGS) $(OBJ_grep) -o $(DIR_grep)$(TARGET_grep)
+	$(CC) $(CFLAGS) $(OBJ_grep) -o $(TARGET_grep)
 
+tests:
+	-diff <(./s21_grep He $(FILE)) <(grep He $(FILE))
+	-diff <(./s21_grep -v He $(FILE)) <(grep -v He $(FILE))
+	-diff <(./s21_grep -i HE $(FILE)) <(grep -i HE $(FILE))
+	-diff <(./s21_grep -iv He $(FILE)) <(grep -iv He $(FILE))
+	-diff <(./s21_grep -in He $(FILE)) <(grep -in He $(FILE))
+	-diff <(./s21_grep -ie "^he" $(FILE)) <(grep -ie "^he" $(FILE))
+	-diff <(./s21_grep -ie "he" $(FILE)) <(grep -ie "he" $(FILE))
+	-diff <(./s21_grep -ince "he" $(FILE)) <(grep -ince "he" $(FILE))
+	-diff <(./s21_grep -lh se $(FILE)) <(grep -lh se $(FILE))
+	-diff <(./s21_grep -hc e $(FILE)) <(grep -hc e $(FILE))
+	-diff <(./s21_grep -e He -e es $(FILE)) <(grep -e He -e es $(FILE))
+	-diff <(./s21_grep -s he not_exist) <(grep -s he not_exist)
+	-diff <(./s21_grep -f $(REG_FILE) $(FILE)) <(grep -f $(REG_FILE) $(FILE))
+	-diff <(./s21_grep -oi he $(FILE)) <(grep -oi he $(FILE))
+	-diff <(./s21_grep -ohf $(REG_FILE) $(FILE)) <(grep -ohf $(REG_FILE) $(FILE))
+	-diff <(./s21_grep -oinc he $(FILE)) <(grep -oinc he $(FILE))
+	-diff <(./s21_grep -oihlnc -e he -e se -f $(REG_FILE) $(FILE)) <(grep -oihlnc -e he -e se -f $(REG_FILE) $(FILE))
+	
+cpp:  
+		cppcheck --enable=all --suppress=missingIncludeSystem *.c
+
+leaks: 
+		valgrind --tool=memcheck --leak-check=yes --track-origins=yes ./s21_grep he test_grep.txt
+		valgrind --tool=memcheck --leak-check=yes --track-origins=yes ./s21_grep -e he -e se -f regex.txt test_grep.txt
+		valgrind --tool=memcheck --leak-check=yes --track-origins=yes ./s21_grep -ince "he" test_grep.txt
+		valgrind --tool=memcheck --leak-check=yes --track-origins=yes ./s21_grep -oinc he test_grep.txt
+		valgrind --tool=memcheck --leak-check=yes --track-origins=yes ./s21_grep -lhnc he test_grep.txt
+
+clang: 
+		clang-format -i *.c
+		clang-format -n *.c
+
+checks: 
+		 $(MAKE) cpp clang leaks
 
 #$(TARGET): $(OBJ) 
 #	$(CC) $(CFLAGS) $(OBJ) -o $(TARDIR)$(TARGET) 
 
-$(DIR_cat)%.o: $(DIR_cat)%.c 
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(DIR_grep)%.o: $(DIR_grep)%.c 
+%.o: %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
 
 #$(OBJ): $(SRC)
@@ -37,6 +62,8 @@ $(DIR_grep)%.o: $(DIR_grep)%.c
 
 
 clean:
-	rm -f *.o *.a *.out  *.so. ../*/*.o ../*/*.a ../*/*.so
+	rm -f *.o *.a *.out *.so. ../*/*.o ../*/*.a ../*/*.so
 
 rebuild: clean all 
+
+.PHONY: all clean rebuild s21_grep tests cpp leaks clang checks

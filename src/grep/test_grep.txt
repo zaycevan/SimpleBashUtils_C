@@ -1,0 +1,26 @@
+# Grep Test File
+Created for testing grep command with various flags
+
+LINE 1: Hello World!
+LINE 2: hello world?
+LINE 3: HELLO WORLD.
+LINE 4: Grep is a powerful tool
+LINE 5: grep can be used with flags
+LINE 6: GREP stands for Global Regular Expression Print
+
+Some duplicate lines:
+Hello World!
+hello world?
+HELLO WORLD.
+
+Special characters: 
+123-456-7890
+test@example.com
+https://www.example.com
+
+Empty lines will be here:
+
+
+And here:
+
+End of file.

@@ -6,14 +6,13 @@ typedef struct opts_status {
   int b, E, n, s, T, v;
 } OPTS_STATUS;
 
-static void opts_handler(int argc, char* argv[], OPTS_STATUS* opts_status) {
+void opts_handler(int argc, char* argv[], OPTS_STATUS* opts_status) {
   struct option long_opts[] = {{"number-nonblank", 0, NULL, 'b'},
                                {"number", 0, NULL, 'n'},
                                {"squeeze-blank", 0, NULL, 's'},
                                {NULL, 0, NULL, 0}};
-
   int opt;
-  while ((opt = getopt_long(argc, argv, "beEnstT", long_opts, NULL)) != -1) {
+  while ((opt = getopt_long(argc, argv, "+beEnstT", long_opts, NULL)) != -1) {
     switch (opt) {
       case 'b':
         opts_status->b = 1;
@@ -47,7 +46,7 @@ static void opts_handler(int argc, char* argv[], OPTS_STATUS* opts_status) {
   }
 }
 
-static void symbol_handler(int* current_symbol) {
+void symbol_handler(int* current_symbol) {
   if (*current_symbol < 32 && *current_symbol != 9 && *current_symbol != 10 &&
       *current_symbol != 13) {
     putchar('^');
@@ -69,18 +68,16 @@ static void symbol_handler(int* current_symbol) {
   }
 }
 
-static void file_handler(const char* argv[], const OPTS_STATUS* opts_status) {
+void file_handler(const char* argv[], const OPTS_STATUS* opts_status) {
   FILE* file = fopen(argv[optind], "r");
   if (file == NULL) {
     perror("Error opening file");
     exit(1);
   }
-
   int current_symbol;
   int prev_symbol = '\n';
   int line_counter = 0;
   int empty_line_counter = 0;
-
   while ((current_symbol = fgetc(file)) != EOF) {
     if (opts_status->s && current_symbol == '\n' && prev_symbol == '\n') {
       empty_line_counter++;
@@ -92,15 +89,12 @@ static void file_handler(const char* argv[], const OPTS_STATUS* opts_status) {
     } else if (empty_line_counter <= 1 && opts_status->n &&
                current_symbol == '\n' && prev_symbol == '\n')
       printf("%6d\t", ++line_counter);
-
     if ((opts_status->E) && current_symbol == '\n' && empty_line_counter <= 1)
       printf("$");
-
     if (opts_status->T && current_symbol == '\t') {
       putchar('^');
       current_symbol = 'I';
     }
-
     if (opts_status->v) symbol_handler(&current_symbol);
     if (empty_line_counter <= 1) putchar(current_symbol);
     prev_symbol = current_symbol;

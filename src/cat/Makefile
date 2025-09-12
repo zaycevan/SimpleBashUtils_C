@@ -32,7 +32,8 @@ cpp:
 		cppcheck --enable=all --suppress=missingIncludeSystem *.c
 
 leaks: 
-		valgrind --tool=memcheck --leak-check=yes  ./s21_cat -etsbn test.txt
+		valgrind --tool=memcheck --leak-check=yes --track-origins=yes ./s21_cat -etsbn test.txt
+		valgrind --tool=memcheck --leak-check=yes --track-origins=yes ./s21_cat test.txt
 
 clang: 
 		clang-format -i *.c

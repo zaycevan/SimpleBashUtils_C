@@ -1,0 +1,13 @@
+Explanation
+
+Starting from the main() function, firstly we are declaring a variable of type regex_t to create the regex, 
+then we are declaring an int variable as well to store the outcome of the regex creation process, that whether it was successful or not.
+After that we are calling the regcomp() function with the expression as [:word:], 
+upon execution, the given expression will be compiled and will get stored at the memory location pointed by the variable rx.
+Then after we are checking for the return value of the function regcomp(), if the value comes to be 0, then the compilation process 
+of the given expression was successful, if so we are printing the success message, else printing the error message.
+Note - The library regex.h comes preinstalled as a part of the libc development package in Linux and macOS, however, 
+in the case of windows, Microsoft does not provide regex routines by default, the possible solutions are,
+
+Manual download of the regex library in the system to work with C language, or
+Move to C++, and use the c++ regular expression routines as they are part of the C++ Standard from C++11 onwards.
