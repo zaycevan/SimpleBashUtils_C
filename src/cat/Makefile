@@ -5,7 +5,6 @@ FILE = test.txt
 
 SRC_cat = cat.c
 OBJ_cat =  $(SRC_cat:.c=.o)
-#OBJ_cat = $(patsubst %.c, %.o, $(notdir $(SRC)))
 
 TARGET_cat = s21_cat
 
@@ -42,14 +41,9 @@ clang:
 checks: 
 		 $(MAKE) cpp clang  leaks
 
-#$(TARGET): $(OBJ) 
-#	$(CC) $(CFLAGS) $(OBJ) -o $(TARDIR)$(TARGET) 
 
 %.o: %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
-
-#$(OBJ): $(SRC)
-#	$(CC) $(CFLAGS) -c $(SRC)
 
 
 clean:

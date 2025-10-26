@@ -6,7 +6,6 @@ REG_FILE = regex.txt
 
 SRC_grep = grep.c
 OBJ_grep =  $(SRC_grep:.c=.o)
-#OBJ_grep = $(patsubst %.c, %.o, $(notdir $(SRC)))
 
 TARGET_grep = s21_grep
 
@@ -51,14 +50,8 @@ clang:
 checks: 
 		 $(MAKE) cpp clang leaks
 
-#$(TARGET): $(OBJ) 
-#	$(CC) $(CFLAGS) $(OBJ) -o $(TARDIR)$(TARGET) 
-
 %.o: %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
-
-#$(OBJ): $(SRC)
-#	$(CC) $(CFLAGS) -c $(SRC)
 
 
 clean:
